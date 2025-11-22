@@ -1,0 +1,22 @@
+services:
+  mariadb:
+    image: mariadb
+    build:
+      context: ./mariadb
+      dockerfile: Dockerfile
+    container_name: mariadb
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - mariadb_volume:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  mariadb_volume:
+    driver: local
+    driver_opts: 
+      type: none
+      device: /home/lleodev/data/mariadb_volume
+      o: bind

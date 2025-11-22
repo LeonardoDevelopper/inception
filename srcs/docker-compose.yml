@@ -10,8 +10,33 @@ services:
       - .env
     volumes:
       - mariadb_volume:/var/lib/mysql
+      - ~/nginx_certs:/etc/nginx/certs:ro
+      - ./index.html:/usr/share/nginx/html/index.html:ro
     ports:
       - "3306:3306"
+  nginx:
+    image: nginx
+    depends_on:
+      - wordpress-fpm
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    restart: always
+    ports:
+      - "443:443"
+      - "80:80"
+  wordpress-fpm:
+    image: wordpress-fpm
+    build: 
+      context: ./wordpress-fpm
+      dockerfile: Dockerfile
+    depends_on:
+      - mariadb
+    env_file:
+      - .env
+    expose:
+      - "9000"
 
 volumes:
   mariadb_volume:
